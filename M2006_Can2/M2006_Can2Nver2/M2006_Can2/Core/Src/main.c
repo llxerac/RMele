@@ -64,6 +64,8 @@ extern DMA_HandleTypeDef hdma_usart1_tx;
 const RC_ctrl_t *local_rc_ctrl;
 static CAN_TxHeaderTypeDef  Tx_message;
  uint8_t Send_data[8];
+
+pid_t pid_speed[4];		   //电机速度PID环
  
 /*底盘电机id的结构体*/
  typedef enum
@@ -185,6 +187,12 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef*hcan)
 			break;
 		}
 	}
+	
+	CAN_chassis_current((int16_t)(pid_speed[0].pos_out),
+							 (int16_t)(pid_speed[1].pos_out),
+							 (int16_t)(pid_speed[2].pos_out),
+							 (int16_t)(pid_speed[3].pos_out));
+	CAN_current(0, 0, (int16_t)local_rc_ctrl->rc.ch[4] * 1.5, 0);	//将ch[1]换绑为ch[4]
 }
 
 //电机滤波器设置
@@ -255,7 +263,7 @@ void fric_on(uint16_t cmd)
     __HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, cmd);
     __HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_3, cmd);
 }
-
+//似乎没有使用
 double pwm_control_data1()
 {
 	double date;
@@ -380,6 +388,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 //					{
 //						HAL_UART_Transmit(&huart1, "arror\n", sizeof("arror\n"), 10000);
 //					}
+					
+					
+					/*
 					__HAL_TIM_SetCompare(&htim1,TIM_CHANNEL_1, auto_control_y());
 				__HAL_TIM_SetCompare(&htim1,TIM_CHANNEL_2, auto_control_y());
 				__HAL_TIM_SetCompare(&htim1,TIM_CHANNEL_3, auto_control_y());
@@ -387,6 +398,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
 
 				__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, auto_control_x());
+					*/
 		}
 	}
 }
@@ -403,7 +415,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	pid_t pid_speed[4];		   //电机速度PID环
+	//pid_t pid_speed[4];		   //电机速度PID环
 	float set_speed_temp;			   //加减速时的临时设定速度
 	int16_t delta;					   //设定速度与实际速度的差值
 	int16_t max_speed_change = 1000;   //电机单次最大变化速度，加减速用
@@ -542,12 +554,14 @@ int main(void)
 				pid_calc(&pid_speed[i], (float)motor_chassis[i].speed_rpm, set_speed_temp);
 			}
 			
+			/*	
+			//CAN底盘
 			CAN_chassis_current((int16_t)(pid_speed[0].pos_out),
 							 (int16_t)(pid_speed[1].pos_out),
 							 (int16_t)(pid_speed[2].pos_out),
 							 (int16_t)(pid_speed[3].pos_out));
-
 				HAL_Delay(2);
+			*/
 				/*snail电机*/
 				fp32 pwm;
 				pwm = 1000.0f + local_rc_ctrl->rc.ch[1];
@@ -560,8 +574,11 @@ int main(void)
 //				fric_on((uint16_t)(pwm));
 //				
 				/*拨弹电机*/
+				/*
+				
  				CAN_current(0, 0, (int16_t)local_rc_ctrl->rc.ch[4] * 1.5, 0);	//将ch[1]换绑为ch[4]
 				HAL_Delay(2);
+				*/
 				
 				/*云台*/
 //				__HAL_TIM_SetCompare(&htim1,TIM_CHANNEL_1, pwm_control_data2());
