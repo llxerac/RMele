@@ -502,8 +502,8 @@ int main(void)
 	float positionPitchNumF = 0;
 				HAL_GPIO_WritePin(GPIOH,GPIO_PIN_10,GPIO_PIN_SET);
 				HAL_GPIO_WritePin(GPIOH,GPIO_PIN_11,GPIO_PIN_RESET);
-	__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 1000);
-	__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, 1000);
+	//__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 1000);
+	//__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_2, 1000);
 	
 	HAL_Delay(200);
 
