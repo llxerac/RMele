@@ -325,6 +325,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 				HAL_UART_Transmit(&huart1, TxData, sizeof(TxData), 10000);
 		}
 		else{
+			HAL_GPIO_WritePin(GPIOH, GPIO_PIN_12, GPIO_PIN_SET);
+			
 				HAL_UART_Transmit(&huart1, RxData, sizeof(RxData), 10000);
 			for(uint16_t i = 0, j = 100; i < 3; i++)
 					{
