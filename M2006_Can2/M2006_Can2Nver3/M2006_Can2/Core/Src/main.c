@@ -634,24 +634,18 @@ int main(void)
 				
 				positionPitchNum = positionPitchNum + 1500;
 				UART1TransmitNum[1] = 43;//+
-				positionPitchNum = abs(positionPitchNum);
+				positionPitchNum = abs(positionPitchNum) - 40;
 			}
 			
-			if (positionPitchNum > 1800){
-				positionPitchNum = 1800;
+			if (positionPitchNum > 1900){
+				positionPitchNum = 1900;
 			}
-			else if(positionPitchNum <1200){
-				positionPitchNum = 1200;
+			else if(positionPitchNum <1100){
+				positionPitchNum = 1100;
 			}
 			
-			positionPitchNum = abs(positionPitchNum) -40 ;//云台pitch倒数第二步得数
-			//statical_positionPitchNum = statical_positionPitchNum + (positionPitchNum-1500) * 0.01 ;//云台最终输出
-			/*
-			if (statical_positionPitchNum > 1800){
-				statical_positionPitchNum = 1800;
-			}
-			else if(statical_positionPitchNum <1200){
-				statical_positionPitchNum = 1200;
+			positionPitchNum = abs(positionPitchNum) ;//云台pitch倒数第二步得数
+			statical_positionPitchNum = statical_positionPitchNum + (positionPitchNum-1460) * 0.01 ;//云台最终输出
 			
 			if (statical_positionPitchNum > 1800){
 				statical_positionPitchNum = 1800;
@@ -659,8 +653,9 @@ int main(void)
 			else if(statical_positionPitchNum <1200){
 				statical_positionPitchNum = 1200;
 			}
-			statical_positionPitchNum = statical_positionPitchNum - 40;
-			*/
+
+			statical_positionPitchNum = statical_positionPitchNum ;
+			
 			
 			basicCountRE = positionPitchNum;
 			HAL_GPIO_WritePin(GPIOH,GPIO_PIN_10,GPIO_PIN_RESET);
@@ -684,7 +679,7 @@ int main(void)
 			
 			UART1TransmitNum[19] = 10;//\n
 			//HAL_UART_Transmit(&huart1,UART1TransmitNum,20, HAL_MAX_DELAY);
-			__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, positionPitchNum);
+			__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, statical_positionPitchNum);
 			HAL_Delay(5);
 			/*
 			if (positionPitchNum > 1000){
