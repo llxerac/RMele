@@ -30,25 +30,23 @@ Build target 'M2006_Can2'
 compiling main.c...
 ../Core/Inc/stdarg.h(13): warning:  #47-D: incompatible redefinition of macro "__ARMCLIB_VERSION"  (declared at line 20 of "D:\Keil5\ARM\ARMCC\Bin\..\include\stdio.h")
   #define __ARMCLIB_VERSION 5060044
-../Core/Src/main.c(476): warning:  #177-D: variable "temp_Array"  was declared but never referenced
-  		int temp_Array = 0;
-../Core/Src/main.c(652): warning:  #550-D: variable "pwm"  was set but never used
+../Core/Src/main.c(561): warning:  #550-D: variable "pwm"  was set but never used
   				fp32 pwm;
-../Core/Src/main.c(579): warning:  #177-D: variable "tempPWMvar1"  was declared but never referenced
+../Core/Src/main.c(488): warning:  #177-D: variable "tempPWMvar1"  was declared but never referenced
   	int tempPWMvar1 = 1200;
-../Core/Src/main.c(580): warning:  #177-D: variable "tempPWMvar2"  was declared but never referenced
+../Core/Src/main.c(489): warning:  #177-D: variable "tempPWMvar2"  was declared but never referenced
   	int tempPWMvar2 = 1500;
-../Core/Src/main.c(581): warning:  #177-D: variable "tempPWMFlagVar"  was declared but never referenced
+../Core/Src/main.c(490): warning:  #177-D: variable "tempPWMFlagVar"  was declared but never referenced
   	int tempPWMFlagVar = 1;
-../Core/Src/main.c(585): warning:  #550-D: variable "UART1TransmitNum"  was set but never used
+../Core/Src/main.c(494): warning:  #550-D: variable "UART1TransmitNum"  was set but never used
   	uint8_t UART1TransmitNum[20] = {64};
-../Core/Src/main.c(586): warning:  #177-D: variable "UART1TransmitNumTemp"  was declared but never referenced
+../Core/Src/main.c(495): warning:  #177-D: variable "UART1TransmitNumTemp"  was declared but never referenced
   	uint8_t UART1TransmitNumTemp[20] = {0};
-../Core/Src/main.c: 8 warnings, 0 errors
+../Core/Src/main.c: 7 warnings, 0 errors
 linking...
-Program Size: Code=16768 RO-data=460 RW-data=120 ZI-data=2376  
+Program Size: Code=16548 RO-data=460 RW-data=80 ZI-data=2352  
 FromELF: creating hex file...
-"M2006_Can2\M2006_Can2.axf" - 0 Error(s), 8 Warning(s).
+"M2006_Can2\M2006_Can2.axf" - 0 Error(s), 7 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -71,7 +69,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.0.1
-Build Time Elapsed:  00:00:06
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>

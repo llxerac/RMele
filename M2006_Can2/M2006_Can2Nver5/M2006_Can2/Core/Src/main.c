@@ -299,6 +299,7 @@ uint8_t RxData_DEFAULT[11] = "#0000,0000\n";
 uint8_t TxData[11] = "NO-picture\n";
 
 //由于图片的存储原理，原点位于左上角
+uint8_t tempArrRx[2][4] = {"0000","0000"};
 int picXaxis = 0;
 int picYaxis = 0;
 //
@@ -321,14 +322,13 @@ double auto_control_x()
 	return date;
 }
 
-int getRxNumValue(uint8_t array[],int para_getNumValue){
-	int reNum = para_getNumValue;
-	for(int i = 0 ,j = 1000;i < 3;i++){
-		reNum *=  (array[i] -48) * j;
+int arrayNum2intNum(uint8_t arrayNum[]){
+	int resultIntNum = 1;
+	for(int i = 0 ,j = 1000;i <= 3;i++){
+		resultIntNum +=  (arrayNum[i] -48) * j;
 		j /= 10;
 	}
-	return reNum;
-
+	return resultIntNum - 1;
 }
 
 
@@ -344,112 +344,24 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		temp_rx[3] = 0;
 		//temp_rx[3] = 0;
 
-		if(strcmp( (char *)RxData, "  0   0   0   0") == 0)	//强制转化转换为(char *) searchme
+		if((char)RxData[0] != (char)'#')	//强制转化转换为(char *) searchme
 		{
 				HAL_UART_Transmit(&huart1, TxData, sizeof(TxData), 10);
 				HAL_GPIO_WritePin(GPIOH, GPIO_PIN_12, GPIO_PIN_RESET);
 		}
 		else{
-				HAL_GPIO_WritePin(GPIOH, GPIO_PIN_12, GPIO_PIN_SET);
-				//HAL_UART_Transmit(&huart1, RxData, sizeof(RxData), 100);
-			for(uint16_t i = 0; i < 20; i++){
-				if( (i - 4)%5 == 0){
-					if(RxData[i] == 45){
-						rx_getNumValue[i/5] *= -1;
-					}
-					rx_getNumValue[i/5] = getRxNumValue(rx_arrays[i/5], rx_getNumValue[i/5]);
+			HAL_GPIO_WritePin(GPIOH, GPIO_PIN_12, GPIO_PIN_SET);
+			//HAL_UART_Transmit(&huart1, RxData, sizeof(RxData), 100);
+			for(uint16_t i = 1; i < 10; i++){
+				if(i == 5){
+					continue;
 				}
-				rx_arrays[i/5][i%5] = RxData[i];
+				tempArrRx[i/5][(i%5)-1] = RxData[i];
 			}
+			picXaxis = arrayNum2intNum(tempArrRx[0]);
+			picYaxis = arrayNum2intNum(tempArrRx[1]);
 			
 			
-			
-			
-			
-			
-				/*	//旧处理逻辑
-				for(uint16_t i = 0, j = 100; i < 3; i++)
-					{
-						rx_up[i] = RxData[i];
-						if(rx_up[i] <= '9' && rx_up[i] >= '0')
-						{
-							temp_rx[0] += (rx_up[i] - 48) * j;
-							j /= 10;
-						}
-						else{
-							j /= 10;
-							continue;
-						}
-					}
-					for(uint16_t i = 4, j = 100; i < 7; i++)
-					{
-						rx_left[i - 4] = RxData[i];
-						if(rx_left[i - 4] <= '9' && rx_left[i - 4] >= '0')
-						{
-							temp_rx[1] += (rx_left[i - 4] - 48) * j;
-							j /= 10;
-						}
-						else{
-							j /= 10;
-							continue;
-						}
-					}
-					for(uint16_t i = 8, j = 100; i < 11; i++)
-					{
-						rx_down[i - 8] = RxData[i];
-						if(rx_down[i - 8] <= '9' && rx_down[i - 8] >= '0')
-						{
-							temp_rx[2] += (rx_down[i - 8] - 48) * j;
-							j /= 10;
-						}
-						else{
-							j /= 10;
-							continue;
-						}
-					}
-					for(uint16_t i = 12, j = 100; i < 15; i++)
-					{
-						rx_right[i - 12] = RxData[i];
-						if(rx_right[i - 12] <= '9' && rx_right[i - 12] >= '0')
-						{
-							temp_rx[3] += (rx_right[i - 12] - 48) * j;
-							j /= 10;
-						}
-						else{
-							j /= 10;
-							continue;
-						}
-					}
-					*/
-					
-					/*
-					for(uint16_t i = 16, j = 100; i < 20; i++)
-					{
-						rx_plusORminus[i - 16] = RxData[i];
-						if(rx_plusORminus[i - 16] == '+')
-						{
-							temp_rx[3] += (rx_right[i - 16] - 48) * j;
-							j /= 10;
-						}
-						else if(rx_plusORminus[i - 16] == '-'){
-							
-						}
-						else{
-							j /= 10;
-							continue;
-						}
-					}
-					*/
-//					if(temp_rx[0] == 110 && temp_rx[1] == 222)
-//					{
-//						HAL_GPIO_WritePin(GPIOH, GPIO_PIN_10, GPIO_PIN_SET);
-//						HAL_GPIO_WritePin(GPIOH, GPIO_PIN_11, GPIO_PIN_SET);
-//						HAL_GPIO_WritePin(GPIOH, GPIO_PIN_12, GPIO_PIN_SET);
-//					}
-//					else
-//					{
-//						HAL_UART_Transmit(&huart1, "arror\n", sizeof("arror\n"), 10000);
-//					}
 					
 					
 					
@@ -465,29 +377,20 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		
 		
 		
-		HAL_UART_Transmit(&huart1, (uint8_t *)"$RC$:", sizeof("$RC$:"), 10);
-		HAL_UART_Transmit(&huart1, (uint8_t *)RxData, sizeof(RxData), 10);
-		HAL_UART_Transmit(&huart1, (uint8_t *)"==", sizeof("=="), 10);
-		HAL_UART_Transmit(&huart1, (uint8_t *)rx_arrays, sizeof(rx_arrays), 10);
-		for(int i = 0; i < 4; i++){
-			if(rx_getNumValue[i] > 2000){
+			HAL_UART_Transmit(&huart1, (uint8_t *)"$RC$:", sizeof("$RC$:"), 10);
+			HAL_UART_Transmit(&huart1, (uint8_t *)RxData, sizeof(RxData), 10);
+			HAL_UART_Transmit(&huart1, (uint8_t *)"==", sizeof("=="), 10);
+			if(picXaxis >1000){
 				HAL_UART_Transmit(&huart1, (uint8_t *)"+", sizeof("+"), 10);
-			}else if(rx_getNumValue[i] <- 2000){
-				HAL_UART_Transmit(&huart1, (uint8_t *)"-", sizeof("-"), 10);
 			}else{
-				HAL_UART_Transmit(&huart1, (uint8_t *)"*", sizeof("*"), 10);
+				HAL_UART_Transmit(&huart1, (uint8_t *)"-", sizeof("+"), 10);
 			}
-			rx_getNumValue[i] = 1;
-		}
-		int temp_Array = 0;
-		
-		/*
-		for(int i = 0;i<4;i++){
-			HAL_UART_Transmit(&huart1, (uint8_t *)rx_arrays[i], sizeof("$RC$:"), 10);
-		}
-		*/
-		
-		HAL_UART_Transmit(&huart1, &NEXT_LINE_KEY, sizeof(NEXT_LINE_KEY), 10);
+			if(picYaxis >1000){
+				HAL_UART_Transmit(&huart1, (uint8_t *)"+", sizeof("+"), 10);
+			}else{
+				HAL_UART_Transmit(&huart1, (uint8_t *)"-", sizeof("+"), 10);
+			}
+			HAL_UART_Transmit(&huart1, &NEXT_LINE_KEY, sizeof(NEXT_LINE_KEY), 10);
 		}
 	}
 	HAL_UART_Receive_IT(&huart1, (uint8_t*)RxData, sizeof(RxData));
