@@ -516,6 +516,7 @@ int main(void)
 		  
 		if(switch_is_down(local_rc_ctrl->rc.s[1]))
 		{
+			/*
 			if(local_rc_ctrl->rc.s[0] == 1)
 			{
 				set_speed[0] = 	set_speed[1] = 	set_speed[2] = 	set_speed[3] = 	dma_data(0);
@@ -527,6 +528,14 @@ int main(void)
 				//set_speed[0] = 	set_speed[1] = 	set_speed[2] = 	set_speed[3] = dma_data(0);
 			set_speed[0] = 	set_speed[3] = dma_data(1);
 				set_speed[1] = 	set_speed[2] = -dma_data(3);
+			}
+			*/
+			if(local_rc_ctrl->rc.s[0] == 1)
+			{
+				set_speed[0] = 	-dma_data(3) + dma_data(2) + dma_data(0);
+				set_speed[1] = 	dma_data(3) + dma_data(2) + dma_data(0);
+				set_speed[2] = 	dma_data(3) - dma_data(2) + dma_data(0);
+				set_speed[3] = 	-dma_data(3) - dma_data(2) + dma_data(0);
 			}
 			else if(local_rc_ctrl->rc.s[0] == 3)
 			{
@@ -657,6 +666,19 @@ int main(void)
 			else if(positionPitchNum){
 			}
 			*/
+			
+			/*1280*960 -- 640-480*/
+			int X_MIDDLE_MAX = 640 + 10;
+			int X_MIDDLE_min = 640 - 10;
+			int Y_MIDDLE_MAX = 480 + 10;
+			int Y_MIDDLE_min = 480 - 10;
+			if(local_rc_ctrl->rc.s[0] == 1){
+				if (picXaxis >Y_MIDDLE_min && picXaxis <X_MIDDLE_MAX && picYaxis >Y_MIDDLE_min && picYaxis <X_MIDDLE_MAX){
+					
+				}else{
+					
+				}
+			}
 
 			}
 			else if(switch_is_mid(local_rc_ctrl->rc.s[1]))
